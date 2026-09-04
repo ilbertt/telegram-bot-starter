@@ -39,9 +39,11 @@ Add the bot token to `backend/.env` as `TELEGRAM_BOT_TOKEN`.
 bun run build
 ```
 
-Deploy the compiled Linux x64 binary at `backend/dist/app`. We recommend
-[nibrun](https://nibrun.com), with a persistent, writable `DATA_FOLDER`; its `NIBRUN_HOSTNAME`
-automatically enables webhook mode.
+Deploy the compiled Linux x64 binary at `backend/dist/app`.
+
+[nibrun](https://nibrun.com) is an ideal fit for this starter: it provides the persistent
+filesystem SQLite needs and a public HTTPS endpoint for Telegram webhooks at a low cost. Use a
+writable `DATA_FOLDER`; nibrun's `NIBRUN_HOSTNAME` automatically enables webhook mode.
 
 ## Development
 
