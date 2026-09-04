@@ -2,8 +2,10 @@ import type { Api } from 'grammy';
 import { createLogger } from '#lib/logger.ts';
 import type { RemindersService } from '#services/reminders.service.ts';
 
+const REMINDER_SCAN_INTERVAL_MS = 5_000;
+
 export class ReminderScheduler {
-  private job: Bun.CronJob | null = null;
+  private timer: Timer | null = null;
   private running = false;
   private readonly logger = createLogger('scheduler');
 
@@ -13,16 +15,18 @@ export class ReminderScheduler {
   ) {}
 
   start(): void {
-    if (this.job) {
+    if (this.timer) {
       return;
     }
     void this.runTick();
-    this.job = Bun.cron('* * * * *', () => this.runTick());
+    this.timer = setInterval(() => void this.runTick(), REMINDER_SCAN_INTERVAL_MS);
   }
 
   stop(): void {
-    this.job?.stop();
-    this.job = null;
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    this.timer = null;
   }
 
   private async runTick(): Promise<void> {
