@@ -6,7 +6,7 @@ import { isInsideTelegram, saveDevelopmentInitData } from './lib/telegram.ts';
 
 function BrowserSetup() {
   const [value, setValue] = useState('');
-  if (isInsideTelegram()) {
+  if (!import.meta.env.DEV || isInsideTelegram()) {
     return null;
   }
   return (
