@@ -1,0 +1,30 @@
+{
+  "name": "backend",
+  "type": "module",
+  "private": true,
+  "imports": {
+    "#*": "./src/*"
+  },
+  "exports": {
+    "./types": "./src/types.ts"
+  },
+  "scripts": {
+    "dev": "bun run scripts/dev.ts",
+    "build": "bun run scripts/build.ts",
+    "check:types": "bun run check:queries && bun run --bun tsc -b",
+    "check:queries": "bun run db:gen --check",
+    "db:gen": "bun run --bun bun-sqlgen generate 'src/**/*.ts' --migrations src/db/migrations --out src/db/queries.gen.ts --dialect sqlite",
+    "dev:init-data": "bun run scripts/generate-dev-init-data.ts"
+  },
+  "dependencies": {
+    "@elysiajs/openapi": "^1.4.15",
+    "@grammyjs/runner": "^2.0.3",
+    "@ilbertt/bun-sqlgen": "^0.5.1",
+    "elysia": "^1.4.30",
+    "grammy": "^1.38.3"
+  },
+  "devDependencies": {
+    "openapi-types": "^12.1.3",
+    "typescript": "catalog:"
+  }
+}

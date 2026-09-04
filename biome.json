@@ -1,0 +1,167 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.11/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/bun.lock",
+      "!**/*.lock",
+      "!**/*.svg",
+      "!backend/src/db/queries.gen.ts"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "useEditorconfig": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "error",
+        "useMaxParams": {
+          "level": "off",
+          "options": {
+            "max": 1
+          }
+        }
+      },
+      "performance": {
+        "noBarrelFile": "error"
+      },
+      "suspicious": {
+        "useAwait": "error",
+        "noDeprecatedImports": "error"
+      },
+      "nursery": {
+        "useAwaitThenable": "error",
+        "noFloatingPromises": "error",
+        "useSortedClasses": {
+          "level": "error",
+          "options": {
+            "functions": ["clsx", "cva", "cn", "tw", "tw.*"]
+          }
+        }
+      },
+      "style": {
+        "noNonNullAssertion": "off",
+        "useBlockStatements": "error",
+        "noMagicNumbers": "off",
+        "noExportedImports": "error",
+        "useFilenamingConvention": {
+          "level": "off",
+          "options": {
+            "filenameCases": ["kebab-case"]
+          }
+        }
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "lineWidth": 100
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    },
+    "formatter": {
+      "enabled": true
+    }
+  },
+  "html": {
+    "formatter": {
+      "enabled": true
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.ts", "**/*.tsx"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useFilenamingConvention": "error"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["backend/src/repositories/**/*.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["#routes/**", "#services/**"],
+                    "message": "Repositories must not depend on controllers or services."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["backend/src/services/**/*.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["#routes/**"],
+                    "message": "Services must not depend on controllers."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["backend/src/routes/**/*.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["#repositories/**"],
+                    "message": "Controllers must depend on services, not repositories."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

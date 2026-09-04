@@ -1,0 +1,36 @@
+{
+  "name": "bun-telegram-bot-starter",
+  "type": "module",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "backend",
+      "miniapp"
+    ],
+    "catalog": {
+      "typescript": "^7.0.2"
+    }
+  },
+  "scripts": {
+    "backend": "bun --filter backend",
+    "miniapp": "bun --filter miniapp",
+    "dev": "bun run scripts/dev.ts",
+    "build": "bun run scripts/build.ts",
+    "build:local": "BUILD_TARGET=host bun run build",
+    "check:types": "bun run scripts/check-types.ts",
+    "check:codestyle": "bun run --bun biome check",
+    "check:all": "bun run --parallel check:types check:codestyle",
+    "fix:codestyle": "bun run --bun biome check --write",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.11",
+    "@types/bun": "^1.4.0",
+    "typescript": "catalog:"
+  },
+  "engines": {
+    "bun": "1.4.0",
+    "node": "please use bun"
+  },
+  "packageManager": "bun@1.4.0"
+}
