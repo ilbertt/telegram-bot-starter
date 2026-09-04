@@ -37,12 +37,17 @@ Local development automatically uses long polling.
 ### 5. Compile and deploy
 
 ```bash
-bun test
 bun run build
 ```
 
 Deploy the compiled Linux x64 binary at `backend/dist/app`. We recommend
 [nibrun](https://nibrun.com), with a persistent, writable `DATA_FOLDER`; its `NIBRUN_HOSTNAME`
 automatically enables webhook mode.
+
+## Development
+
+```bash
+bun test
+```
 
 Delete `miniapp/` for a bot-only project. Development, checks, and builds continue to work.
