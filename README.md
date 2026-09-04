@@ -14,10 +14,11 @@ Development, checks, and builds work in either shape.
 
 ## Getting started
 
-### 1. Create a bot
+### 1. Create and configure your bot
 
-Create a development bot with [@BotFather](https://t.me/BotFather). Keep it separate from your
-production bot so the two do not compete for the same polling token.
+Create a bot with [@BotFather](https://t.me/BotFather) and copy its token. Once deployed, use your
+public HTTPS origin as the Mini App URL. The app automatically sets the chat menu button to that
+origin and registers `<origin>/api/telegram/webhook` as the webhook URL.
 
 ### 2. Install dependencies
 
