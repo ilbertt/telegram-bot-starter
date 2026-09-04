@@ -39,7 +39,7 @@ const result = await Bun.build({
     [PUBLIC_MINIAPP_DIR_NAME_CONSTANT_NAME]: JSON.stringify(PUBLIC_MINIAPP_DIR_NAME),
     [DB_MIGRATIONS_DIR_NAME_CONSTANT_NAME]: JSON.stringify(DB_MIGRATIONS_DIR_NAME),
   },
-  minify: { whitespace: true, syntax: true },
+  minify: true,
   target: 'bun',
 });
 
