@@ -26,13 +26,23 @@ cp backend/.env.example backend/.env
 
 Add the bot token to `backend/.env` as `TELEGRAM_BOT_TOKEN`.
 
-### 4. Run locally
+## Development
+
+### 4. Run and test locally
 
 ```bash
 bun dev
 ```
 
+In another terminal, run the tests:
+
+```bash
+bun test
+```
+
 Local development automatically uses long polling.
+
+## Deployment
 
 ### 5. Compile and deploy
 
@@ -43,11 +53,5 @@ bun run build
 Deploy the compiled Linux x64 binary at `backend/dist/app`. We recommend
 [nibrun](https://nibrun.com), with a persistent, writable `DATA_FOLDER`; its `NIBRUN_HOSTNAME`
 automatically enables webhook mode.
-
-## Development
-
-```bash
-bun test
-```
 
 Delete `miniapp/` for a bot-only project. Development, checks, and builds continue to work.
