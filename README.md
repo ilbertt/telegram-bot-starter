@@ -7,26 +7,42 @@ Linux x64 binary with migrations and the optional React Mini App embedded.
 
 ## Getting started
 
-Create a bot with [@BotFather](https://t.me/BotFather), then add its token to `backend/.env`.
+### 1. Create a bot
+
+Create a development bot with [@BotFather](https://t.me/BotFather). Keep it separate from your
+production bot so the two do not compete for the same polling token.
+
+### 2. Install dependencies
 
 ```bash
 bun install
+```
+
+### 3. Configure the environment
+
+```bash
 cp backend/.env.example backend/.env
+```
+
+Add the bot token to `backend/.env` as `TELEGRAM_BOT_TOKEN`.
+
+### 4. Run locally
+
+```bash
 bun dev
 ```
 
-Local development uses long polling. Use a separate development bot so it does not conflict with
-the production bot using the same token.
+Local development automatically uses long polling.
 
-## Build and deploy
+### 5. Compile and deploy
 
 ```bash
 bun test
 bun run build
 ```
 
-The Linux x64 binary is written to `backend/dist/app`. Deploy it to nibrun with a persistent,
-writable `DATA_FOLDER`; SQLite data and the generated webhook secret are stored there. nibrun's
-`NIBRUN_HOSTNAME` automatically enables webhook mode.
+Deploy the compiled Linux x64 binary at `backend/dist/app`. We recommend
+[nibrun](https://nibrun.com), with a persistent, writable `DATA_FOLDER`; its `NIBRUN_HOSTNAME`
+automatically enables webhook mode.
 
 Delete `miniapp/` for a bot-only project. Development, checks, and builds continue to work.
