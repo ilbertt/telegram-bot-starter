@@ -46,11 +46,7 @@ if (!env.TEST_ONLY_SKIP_TELEGRAM) {
     });
     logger.info(`bot running with webhook ${webhookUrl}`);
   }
-  scheduler = new ReminderScheduler(
-    services.reminders,
-    telegramBot.api,
-    env.REMINDER_POLL_INTERVAL_MS,
-  );
+  scheduler = new ReminderScheduler(services.reminders, telegramBot.api);
   scheduler.start();
 }
 

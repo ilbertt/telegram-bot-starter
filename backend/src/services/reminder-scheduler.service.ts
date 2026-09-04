@@ -3,29 +3,34 @@ import { createLogger } from '#lib/logger.ts';
 import type { RemindersService } from '#services/reminders.service.ts';
 
 export class ReminderScheduler {
-  private timer: Timer | null = null;
+  private job: Bun.CronJob | null = null;
   private running = false;
   private readonly logger = createLogger('scheduler');
 
   constructor(
     private readonly reminders: RemindersService,
     private readonly api: Pick<Api, 'sendMessage'>,
-    private readonly intervalMs: number,
   ) {}
 
   start(): void {
-    if (this.timer) {
+    if (this.job) {
       return;
     }
-    void this.tick();
-    this.timer = setInterval(() => void this.tick(), this.intervalMs);
+    void this.runTick();
+    this.job = Bun.cron('* * * * *', () => this.runTick());
   }
 
   stop(): void {
-    if (this.timer) {
-      clearInterval(this.timer);
+    this.job?.stop();
+    this.job = null;
+  }
+
+  private async runTick(): Promise<void> {
+    try {
+      await this.tick();
+    } catch (error) {
+      this.logger.error('failed reminder scan; will retry', error);
     }
-    this.timer = null;
   }
 
   async tick(now = new Date()): Promise<void> {

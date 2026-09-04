@@ -31,30 +31,22 @@ test('scheduler marks accepted reminders sent and retries failures', async () =>
   };
   await remindersRepo.create({ ...base, id: 'ok', text: 'Accepted' });
   const sent: string[] = [];
-  const scheduler = new ReminderScheduler(
-    services.reminders,
-    {
-      sendMessage(_chatId, text) {
-        sent.push(text);
-        return Promise.resolve({} as never);
-      },
+  const scheduler = new ReminderScheduler(services.reminders, {
+    sendMessage(_chatId, text) {
+      sent.push(text);
+      return Promise.resolve({} as never);
     },
-    1_000,
-  );
+  });
   await scheduler.tick(new Date('2026-09-04T12:00:00Z'));
   expect(sent).toEqual(['⏰ Accepted']);
   expect((await remindersRepo.listForUser('1'))[0]?.sentAt).not.toBeNull();
 
   await remindersRepo.create({ ...base, id: 'retry', text: 'Retry' });
-  const failing = new ReminderScheduler(
-    services.reminders,
-    {
-      sendMessage() {
-        return Promise.reject(new Error('Telegram unavailable'));
-      },
+  const failing = new ReminderScheduler(services.reminders, {
+    sendMessage() {
+      return Promise.reject(new Error('Telegram unavailable'));
     },
-    1_000,
-  );
+  });
   await failing.tick(new Date('2026-09-04T12:00:00Z'));
   expect(
     (await remindersRepo.listForUser('1')).find((item) => item.id === 'retry')?.sentAt,

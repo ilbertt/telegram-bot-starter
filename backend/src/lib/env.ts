@@ -47,7 +47,6 @@ export const env = {
   TELEGRAM_INIT_DATA_MAX_AGE_SECONDS: Number(
     process.env.TELEGRAM_INIT_DATA_MAX_AGE_SECONDS || 86_400,
   ),
-  REMINDER_POLL_INTERVAL_MS: Number(process.env.REMINDER_POLL_INTERVAL_MS || 5_000),
   BOT_MODE: botMode(process.env.BOT_MODE),
   PUBLIC_ORIGIN: publicOrigin(),
   TEST_ONLY_SKIP_TELEGRAM: process.env.TEST_ONLY_SKIP_TELEGRAM === 'true',
