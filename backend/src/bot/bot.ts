@@ -6,6 +6,7 @@ import { installCommands } from '#bot/commands.ts';
 import type { BotContext } from '#bot/context.ts';
 import { installFlowHandlers } from '#bot/flows/reminder-flow.ts';
 import { initialSession, sessionKey } from '#bot/session.ts';
+import { formatTelegramUpdate } from '#bot/update-log.ts';
 import { createLogger } from '#lib/logger.ts';
 import type { SessionRepository } from '#repositories/session.repository.ts';
 import type { BotServices } from '#services/container.ts';
@@ -30,6 +31,10 @@ export function createBot({
     ...(botInfo ? { botInfo } : {}),
   });
 
+  bot.use((ctx, next) => {
+    logger.info(formatTelegramUpdate(ctx));
+    return next();
+  });
   bot.use(sequentialize(sessionKey));
   bot.use(session({ initial: initialSession, storage: sessions, getSessionKey: sessionKey }));
   bot.use(async (ctx, next) => {

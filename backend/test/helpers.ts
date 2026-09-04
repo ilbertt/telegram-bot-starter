@@ -65,12 +65,14 @@ export const botInfo = {
 export function messageUpdate({
   updateId,
   userId,
+  username,
   chatId,
   text,
   command = false,
 }: {
   updateId: number;
   userId: number;
+  username?: string;
   chatId: number;
   text: string;
   command?: boolean;
@@ -81,7 +83,12 @@ export function messageUpdate({
       message_id: updateId,
       date: Math.floor(Date.now() / 1000),
       chat: { id: chatId, type: chatId < 0 ? 'group' : ('private' as const) },
-      from: { id: userId, is_bot: false, first_name: `User ${userId}` },
+      from: {
+        id: userId,
+        is_bot: false,
+        first_name: `User ${userId}`,
+        ...(username ? { username } : {}),
+      },
       text,
       ...(command
         ? { entities: [{ offset: 0, length: text.length, type: 'bot_command' as const }] }

@@ -1,14 +1,17 @@
-import { type Bot, InlineKeyboard } from 'grammy';
+import { type Bot, type CommandContext, InlineKeyboard, type MiddlewareFn } from 'grammy';
+import type { User } from 'grammy/types';
 import { callbackCodec } from '#bot/callbacks/codec.ts';
 import type { BotContext } from '#bot/context.ts';
 
+type UserBotContext = BotContext & { from: User };
+
 type Command = {
-  command: 'start' | 'remind' | 'reminders' | 'cancel';
+  command: string;
   description: string;
-  handler: (ctx: BotContext) => Promise<unknown>;
+  handler: MiddlewareFn<CommandContext<UserBotContext>>;
 };
 
-const commands: readonly Command[] = [
+const commands = [
   {
     command: 'start',
     description: 'Show help',
@@ -29,7 +32,7 @@ const commands: readonly Command[] = [
     command: 'reminders',
     description: 'List reminders',
     handler: async (ctx) => {
-      const reminders = await ctx.services.reminders.list(String(ctx.from!.id));
+      const reminders = await ctx.services.reminders.list(String(ctx.from.id));
       if (reminders.length === 0) {
         return ctx.reply('You have no reminders.');
       }
@@ -50,14 +53,17 @@ const commands: readonly Command[] = [
       return ctx.reply(active ? 'Cancelled.' : 'Nothing to cancel.');
     },
   },
-];
+] as const satisfies readonly Command[];
+
+export type BotCommandName = (typeof commands)[number]['command'];
 
 export function installCommands(bot: Bot<BotContext>): void {
+  const userBot = bot.filter((ctx): ctx is UserBotContext => ctx.from !== undefined);
   for (const command of commands) {
-    bot.command(command.command, command.handler);
+    userBot.command(command.command, command.handler);
   }
 }
 
-export function telegramCommands(): Array<{ command: string; description: string }> {
+export function telegramCommands(): Array<{ command: BotCommandName; description: string }> {
   return commands.map(({ command, description }) => ({ command, description }));
 }
