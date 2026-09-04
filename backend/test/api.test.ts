@@ -7,7 +7,6 @@ const dataFolder = mkdtempSync(join(tmpdir(), 'telegram-bot-api-'));
 process.env.DATA_FOLDER = dataFolder;
 process.env.TELEGRAM_BOT_TOKEN = '123456789:test-token';
 process.env.TELEGRAM_WEBHOOK_SECRET = 'test_secret';
-process.env.TELEGRAM_INIT_DATA_MAX_AGE_SECONDS = '60';
 
 const [{ Bot }, { runMigrations }, { createApp }, { signInitData }, { botInfo }] =
   await Promise.all([

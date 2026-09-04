@@ -24,7 +24,6 @@ export const telegramAuthPlugin = new Elysia({ name: 'telegram-auth' }).use(Serv
       const user = verifyInitData({
         raw: rawInitData(request),
         botToken: env.TELEGRAM_BOT_TOKEN,
-        maxAgeSeconds: env.TELEGRAM_INIT_DATA_MAX_AGE_SECONDS,
       });
       await services.users.upsert(user);
       return { user };

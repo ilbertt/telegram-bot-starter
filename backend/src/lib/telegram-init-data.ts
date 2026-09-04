@@ -2,6 +2,8 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 import type { User } from 'grammy/types';
 import { UnauthorizedError } from '#lib/errors.ts';
 
+const TELEGRAM_INIT_DATA_MAX_AGE_SECONDS = 86_400;
+
 function dataCheckString(params: URLSearchParams): string {
   return [...params.entries()]
     .filter(([key]) => key !== 'hash')
@@ -18,12 +20,12 @@ export function signInitData(params: URLSearchParams, botToken: string): string 
 export function verifyInitData({
   raw,
   botToken,
-  maxAgeSeconds,
+  maxAgeSeconds = TELEGRAM_INIT_DATA_MAX_AGE_SECONDS,
   now = new Date(),
 }: {
   raw: string;
   botToken: string;
-  maxAgeSeconds: number;
+  maxAgeSeconds?: number;
   now?: Date;
 }): User {
   try {

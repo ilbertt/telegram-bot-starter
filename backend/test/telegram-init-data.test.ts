@@ -15,18 +15,12 @@ function fixture(user = JSON.stringify({ id: 42, is_bot: false, first_name: 'Ada
 }
 
 test('verifies deterministic signed init data', () => {
-  expect(verifyInitData({ raw: fixture(), botToken: token, maxAgeSeconds: 60, now }).id).toBe(42);
+  expect(verifyInitData({ raw: fixture(), botToken: token, now }).id).toBe(42);
 });
 
 test('rejects invalid signature, malformed user, and expiry', () => {
-  expect(() =>
-    verifyInitData({ raw: `${fixture()}x`, botToken: token, maxAgeSeconds: 60, now }),
-  ).toThrow();
-  expect(() =>
-    verifyInitData({ raw: fixture('{bad'), botToken: token, maxAgeSeconds: 60, now }),
-  ).toThrow();
-  const later = new Date(now.getTime() + 61_000);
-  expect(() =>
-    verifyInitData({ raw: fixture(), botToken: token, maxAgeSeconds: 60, now: later }),
-  ).toThrow();
+  expect(() => verifyInitData({ raw: `${fixture()}x`, botToken: token, now })).toThrow();
+  expect(() => verifyInitData({ raw: fixture('{bad'), botToken: token, now })).toThrow();
+  const later = new Date(now.getTime() + 86_401_000);
+  expect(() => verifyInitData({ raw: fixture(), botToken: token, now: later })).toThrow();
 });
