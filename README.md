@@ -5,6 +5,13 @@
 A Bun starter for stateful Telegram bots using grammY, Elysia, and SQLite. It builds to one
 Linux x64 binary with migrations and the optional React Mini App embedded.
 
+## Shape the template
+
+- **Bot only:** delete `miniapp/`.
+- **Bot with a Mini App:** keep both `backend/` and `miniapp/`.
+
+Development, checks, and builds work in either shape.
+
 ## Getting started
 
 ### 1. Create a bot
@@ -51,5 +58,3 @@ bun test
 ```
 
 Local development automatically uses long polling.
-
-Delete `miniapp/` for a bot-only project. Development, checks, and builds continue to work.
