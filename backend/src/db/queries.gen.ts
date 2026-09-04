@@ -34,7 +34,7 @@ export interface IListDueRemindersResult {
 
 /** Result of query `MarkReminderSent`. */
 export interface IMarkReminderSentResult {
-    id: string | null;
+    id: IReminderColumns["id"];
 }
 
 /** Result of query `ReadBotSession`. */
