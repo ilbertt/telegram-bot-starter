@@ -18,7 +18,9 @@ Development, checks, and builds work in either shape.
 
 Create a bot with [@BotFather](https://t.me/BotFather) and copy its token. Once deployed, use your
 public HTTPS origin as the Mini App URL. The app automatically sets the chat menu button to that
-origin and registers `<origin>/api/telegram/webhook` as the webhook URL.
+origin and registers `<origin>/api/telegram/webhook` as the webhook URL. It passes
+`TELEGRAM_WEBHOOK_SECRET` to Telegram during registration and generates one when omitted; there is
+nothing to configure for the webhook in BotFather.
 
 ### 2. Install dependencies
 
