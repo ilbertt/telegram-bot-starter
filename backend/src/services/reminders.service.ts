@@ -7,6 +7,7 @@ import { Service } from '#services/service.ts';
 
 const RELATIVE_PATTERN = /^(\d+)([mhd])$/i;
 const UNIT_MS = { m: 60_000, h: 3_600_000, d: 86_400_000 } as const;
+const DELIVERY_LEASE_MS = 10 * 60_000;
 
 export function parseDueAt(input: string, now = new Date()): Date | null {
   const relative = RELATIVE_PATTERN.exec(input.trim());
@@ -82,9 +83,27 @@ export class RemindersService extends Service {
     return this.remindersRepo.listDue(now);
   }
 
-  async markSent(reminder: ReminderRecord): Promise<void> {
+  async claimDelivery(reminder: ReminderRecord, now = new Date()): Promise<string | null> {
+    const token = uuidv7();
+    const claimed = await this.remindersRepo.claimDelivery({
+      id: reminder.id,
+      userId: reminder.userId,
+      token,
+      now,
+      expiresAt: new Date(now.getTime() + DELIVERY_LEASE_MS),
+    });
+    return claimed ? token : null;
+  }
+
+  async releaseDelivery(reminder: ReminderRecord, token: string): Promise<void> {
+    await this.remindersRepo.releaseDelivery({ id: reminder.id, userId: reminder.userId, token });
+  }
+
+  async markSent(reminder: ReminderRecord, token: string): Promise<void> {
     const sentAt = new Date();
-    if (await this.remindersRepo.markSent({ id: reminder.id, sentAt })) {
+    if (
+      await this.remindersRepo.markSent({ id: reminder.id, userId: reminder.userId, token, sentAt })
+    ) {
       this.events.publish({
         userId: reminder.userId,
         event: { type: 'reminder.sent', reminderId: reminder.id, sentAt },

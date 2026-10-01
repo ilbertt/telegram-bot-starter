@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { type TypedSQL, withTypes } from '@ilbertt/bun-sqlgen';
@@ -13,21 +13,23 @@ import { AssetsService } from '#services/assets.service.ts';
 import type { BotServices } from '#services/container.ts';
 import { EventsService } from '#services/events.service.ts';
 import { HealthService } from '#services/health.service.ts';
+import { ReminderScheduler } from '#services/reminder-scheduler.service.ts';
 import { RemindersService } from '#services/reminders.service.ts';
 import { UsersService } from '#services/users.service.ts';
 
-export async function testDatabase(): Promise<{ db: TypedSQL<Queries> }> {
+export async function testDatabase(): Promise<{ db: TypedSQL<Queries>; filename: string }> {
   const filename = join(tmpdir(), `telegram-bot-test-${crypto.randomUUID()}.sqlite`);
   const db = withTypes<Queries>(new SQL({ adapter: 'sqlite', filename }));
   await db.unsafe('PRAGMA foreign_keys = ON');
-  const migration = readFileSync(
-    join(import.meta.dir, '../src/db/migrations/0000_telegram_bot.sql'),
-    'utf8',
-  );
+  const migrations = join(import.meta.dir, '../src/db/migrations');
   await db.begin(async (transaction) => {
-    await transaction.unsafe(migration);
+    for (const name of readdirSync(migrations)
+      .filter((name) => name.endsWith('.sql'))
+      .sort()) {
+      await transaction.unsafe(readFileSync(join(migrations, name), 'utf8'));
+    }
   });
-  return { db };
+  return { db, filename };
 }
 
 export function testServices(db: TypedSQL<Queries>): {
@@ -37,6 +39,7 @@ export function testServices(db: TypedSQL<Queries>): {
 } {
   const events = new EventsService();
   const remindersRepo = new RemindersRepository(db);
+  const reminders = new RemindersService(remindersRepo, events);
   return {
     sessions: new SessionRepository(db),
     remindersRepo,
@@ -44,7 +47,12 @@ export function testServices(db: TypedSQL<Queries>): {
       assets: new AssetsService(new AssetsRepository(db)),
       events,
       health: new HealthService(new HealthRepository(db)),
-      reminders: new RemindersService(remindersRepo, events),
+      reminders,
+      reminderScheduler: new ReminderScheduler(reminders, {
+        sendMessage() {
+          return Promise.resolve({} as never);
+        },
+      }),
       users: new UsersService(new UsersRepository(db)),
     },
   };

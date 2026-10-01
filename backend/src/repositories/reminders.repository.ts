@@ -61,10 +61,58 @@ export class RemindersRepository extends Repository {
     return rows.map(toRecord);
   }
 
-  async markSent({ id, sentAt }: { id: string; sentAt: Date }): Promise<boolean> {
+  async claimDelivery({
+    id,
+    userId,
+    token,
+    now,
+    expiresAt,
+  }: {
+    id: string;
+    userId: string;
+    token: string;
+    now: Date;
+    expiresAt: Date;
+  }): Promise<boolean> {
+    const rows = await this.sql.ClaimReminderDelivery`
+      UPDATE reminder SET delivery_token = ${token}, delivery_expires_at = ${expiresAt.toISOString()}
+      WHERE id = ${id} AND user_id = ${userId} AND sent_at IS NULL
+        AND due_at <= ${now.toISOString()}
+        AND (delivery_expires_at IS NULL OR delivery_expires_at <= ${now.toISOString()})
+      RETURNING id
+    `;
+    return rows.length === 1;
+  }
+
+  async releaseDelivery({
+    id,
+    userId,
+    token,
+  }: {
+    id: string;
+    userId: string;
+    token: string;
+  }): Promise<void> {
+    await this.sql.ReleaseReminderDelivery`
+      UPDATE reminder SET delivery_token = NULL, delivery_expires_at = NULL
+      WHERE id = ${id} AND user_id = ${userId} AND delivery_token = ${token} AND sent_at IS NULL
+    `;
+  }
+
+  async markSent({
+    id,
+    userId,
+    token,
+    sentAt,
+  }: {
+    id: string;
+    userId: string;
+    token: string;
+    sentAt: Date;
+  }): Promise<boolean> {
     const rows = await this.sql.MarkReminderSent`
-      UPDATE reminder SET sent_at = ${sentAt.toISOString()}
-      WHERE id = ${id} AND sent_at IS NULL
+      UPDATE reminder SET sent_at = ${sentAt.toISOString()}, delivery_token = NULL, delivery_expires_at = NULL
+      WHERE id = ${id} AND user_id = ${userId} AND delivery_token = ${token} AND sent_at IS NULL
       RETURNING id
     `;
     return rows.length === 1;
