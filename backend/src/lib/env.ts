@@ -37,6 +37,7 @@ if (!token) {
 }
 
 export const env = {
+  NODE_ENV: process.env.NODE_ENV || 'production',
   PORT: Number(process.env.PORT || DEFAULT_PORT),
   DATA_FOLDER: dataFolder,
   TELEGRAM_BOT_TOKEN: token,

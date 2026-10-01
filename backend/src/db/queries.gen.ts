@@ -32,6 +32,15 @@ export interface IListDueRemindersResult {
     created_at: IReminderColumns["created_at"];
 }
 
+/** Result of query `ClaimReminderDelivery`. */
+export interface IClaimReminderDeliveryResult {
+    id: IReminderColumns["id"];
+}
+
+/** Result of query `ReleaseReminderDelivery`. */
+export interface IReleaseReminderDeliveryResult {
+}
+
 /** Result of query `MarkReminderSent`. */
 export interface IMarkReminderSentResult {
     id: IReminderColumns["id"];
@@ -59,6 +68,8 @@ export interface Queries {
     ListUserReminders: IListUserRemindersResult;
     DeleteUserReminder: IDeleteUserReminderResult;
     ListDueReminders: IListDueRemindersResult;
+    ClaimReminderDelivery: IClaimReminderDeliveryResult;
+    ReleaseReminderDelivery: IReleaseReminderDeliveryResult;
     MarkReminderSent: IMarkReminderSentResult;
     ReadBotSession: IReadBotSessionResult;
     WriteBotSession: IWriteBotSessionResult;
@@ -90,6 +101,8 @@ export interface IReminderColumns {
     due_at: string;
     sent_at: string | null;
     created_at: string;
+    delivery_token: string | null;
+    delivery_expires_at: string | null;
 }
 
 /** Schema of `reminder`. */
@@ -143,7 +156,9 @@ export const schema = {
             text: { _columnName: "text", _foreignKeys: {} },
             due_at: { _columnName: "due_at", _foreignKeys: {} },
             sent_at: { _columnName: "sent_at", _foreignKeys: {} },
-            created_at: { _columnName: "created_at", _foreignKeys: {} }
+            created_at: { _columnName: "created_at", _foreignKeys: {} },
+            delivery_token: { _columnName: "delivery_token", _foreignKeys: {} },
+            delivery_expires_at: { _columnName: "delivery_expires_at", _foreignKeys: {} }
         },
         _indexes: {
             reminder_due_unsent_idx: { _indexName: "reminder_due_unsent_idx" },

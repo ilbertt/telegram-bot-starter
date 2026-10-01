@@ -2,10 +2,7 @@ import type { Api } from 'grammy';
 import { createLogger } from '#lib/logger.ts';
 import type { RemindersService } from '#services/reminders.service.ts';
 
-const REMINDER_SCAN_INTERVAL_MS = 5_000;
-
 export class ReminderScheduler {
-  private timer: Timer | null = null;
   private running = false;
   private readonly logger = createLogger('scheduler');
 
@@ -14,42 +11,29 @@ export class ReminderScheduler {
     private readonly api: Pick<Api, 'sendMessage'>,
   ) {}
 
-  start(): void {
-    if (this.timer) {
-      return;
-    }
-    void this.runTick();
-    this.timer = setInterval(() => void this.runTick(), REMINDER_SCAN_INTERVAL_MS);
-  }
-
-  stop(): void {
-    if (this.timer) {
-      clearInterval(this.timer);
-    }
-    this.timer = null;
-  }
-
-  private async runTick(): Promise<void> {
-    try {
-      await this.tick();
-    } catch (error) {
-      this.logger.error('failed reminder scan; will retry', error);
-    }
-  }
-
   async tick(now = new Date()): Promise<void> {
     if (this.running) {
       return;
     }
     this.running = true;
     try {
+      const failures: unknown[] = [];
       for (const reminder of await this.reminders.listDue(now)) {
+        const deliveryToken = await this.reminders.claimDelivery(reminder);
+        if (!deliveryToken) {
+          continue;
+        }
         try {
           await this.api.sendMessage(reminder.chatId, `⏰ ${reminder.text}`);
-          await this.reminders.markSent(reminder);
+          await this.reminders.markSent(reminder, deliveryToken);
         } catch (error) {
+          await this.reminders.releaseDelivery(reminder, deliveryToken);
           this.logger.error(`failed reminder ${reminder.id}; will retry`, error);
+          failures.push(error);
         }
+      }
+      if (failures.length > 0) {
+        throw new AggregateError(failures, 'Reminder deliveries failed; will retry next run');
       }
     } finally {
       this.running = false;
