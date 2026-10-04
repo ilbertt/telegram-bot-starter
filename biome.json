@@ -43,13 +43,7 @@
       },
       "nursery": {
         "useAwaitThenable": "error",
-        "noFloatingPromises": "error",
-        "useSortedClasses": {
-          "level": "error",
-          "options": {
-            "functions": ["clsx", "cva", "cn", "tw", "tw.*"]
-          }
-        }
+        "noFloatingPromises": "error"
       },
       "style": {
         "noNonNullAssertion": "off",
@@ -72,9 +66,6 @@
     }
   },
   "css": {
-    "parser": {
-      "tailwindDirectives": true
-    },
     "formatter": {
       "enabled": true
     }

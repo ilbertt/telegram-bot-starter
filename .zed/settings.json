@@ -5,7 +5,6 @@
       "language_servers": [
         "vtsls",
         "biome",
-        "tailwindcss-language-server",
         "!typescript-language-server",
         "!eslint",
         "..."
@@ -24,7 +23,6 @@
       "language_servers": [
         "vtsls",
         "biome",
-        "tailwindcss-language-server",
         "!typescript-language-server",
         "!eslint",
         "..."
@@ -43,7 +41,6 @@
       "language_servers": [
         "vtsls",
         "biome",
-        "tailwindcss-language-server",
         "!typescript-language-server",
         "!eslint",
         "..."
@@ -83,7 +80,6 @@
     "CSS": {
       "language_servers": [
         "biome",
-        "tailwindcss-intellisense-css",
         "!vscode-css-language-server",
         "!vtsls",
         "..."
@@ -98,12 +94,7 @@
       }
     },
     "HTML": {
-      "language_servers": [
-        "biome",
-        "tailwindcss-language-server",
-        "!vtsls",
-        "..."
-      ],
+      "language_servers": ["biome", "!vtsls", "..."],
       "formatter": {
         "language_server": {
           "name": "biome"
@@ -128,11 +119,6 @@
       "binary": {
         "path": "./node_modules/.bin/tsc",
         "arguments": ["--lsp", "--stdio"]
-      }
-    },
-    "tailwindcss-language-server": {
-      "settings": {
-        "classFunctions": ["clsx", "cva", "cn", "tw"]
       }
     }
   },
