@@ -3,6 +3,7 @@
 This is a Bun/grammY/Elysia template that compiles its migrations and optional Mini App into one
 binary. Preserve these rules when changing it:
 
+- Root `package.json` pins Bun in `packageManager`; CI reads it.
 - Keep controller → service → repository layering. Commands, flows, callbacks, and HTTP routes are
   controllers: no SQL or business rules. Services contain business rules but no SQL. Repositories
   contain SQL but no business rules.
