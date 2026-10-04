@@ -28,5 +28,8 @@
     "@types/bun": "^1.4.0",
     "typescript": "catalog:"
   },
+  "engines": {
+    "node": "please use bun"
+  },
   "packageManager": "bun@1.4.2"
 }

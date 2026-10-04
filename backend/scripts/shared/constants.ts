@@ -1,5 +1,4 @@
 import { join } from 'node:path';
-import rootPackageJson from '../../../package.json' with { type: 'json' };
 
 const BACKEND_DIR = join(import.meta.dir, '..', '..');
 export const BACKEND_DIST_DIR = join(BACKEND_DIR, 'dist');
@@ -12,9 +11,7 @@ export const PUBLIC_MINIAPP_DIR_NAME = 'public';
 export const PUBLIC_MINIAPP_DIR_NAME_CONSTANT_NAME = 'PUBLIC_FRONTEND_DIR_NAME';
 export const MINIAPP_DIST_SRC = join(BACKEND_DIR, '..', 'miniapp', 'dist');
 export const MINIAPP_DIST_DST = join(BACKEND_DIR, PUBLIC_MINIAPP_DIR_NAME);
-// Pin cross-compilation to the released runtime, even when the builder runs a different Bun.
-const bunVersion = rootPackageJson.packageManager.replace(/^bun@/, '');
-export const DEFAULT_BUILD_TARGET = `bun-linux-x64-v${bunVersion}`;
+export const DEFAULT_BUILD_TARGET = 'bun-linux-x64';
 const buildTarget = process.env.BUILD_TARGET || DEFAULT_BUILD_TARGET;
 export const BACKEND_BUILD_TARGET =
   buildTarget === 'host' ? undefined : (buildTarget as Bun.Build.CompileTarget);
