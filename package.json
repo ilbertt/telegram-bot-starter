@@ -25,11 +25,11 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.11",
-    "@types/bun": "^1.4.0",
+    "@types/bun": "^1.4.4",
     "typescript": "catalog:"
   },
   "engines": {
     "node": "please use bun"
   },
-  "packageManager": "bun@1.4.2"
+  "packageManager": "bun@1.4.4"
 }
