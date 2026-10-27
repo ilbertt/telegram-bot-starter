@@ -67,7 +67,7 @@ the separate cron process. Close it when observing nibrun sleep; refresh request
 
 Runtime `NODE_ENV` defaults to `production`. `bun dev` explicitly selects `development` and
 uses Bun's in-process cron scheduler without installing an OS job. For a local compiled
-binary, use `NODE_ENV=development`. Bun 1.4.2 or newer is required.
+binary, use `NODE_ENV=development`. Bun 1.4.4 or newer is required.
 
 ## Development
 
